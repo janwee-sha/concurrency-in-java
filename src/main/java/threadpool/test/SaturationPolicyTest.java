@@ -1,4 +1,4 @@
-package threadpool;
+package threadpool.test;
 
 import org.junit.jupiter.api.Test;
 
@@ -63,6 +63,7 @@ public class SaturationPolicyTest {
         executor.execute(() -> queue.offer("Discarded Result"));
 
         assertThat(queue.poll(200, MILLISECONDS)).isNull();
+        executor.shutdown();
     }
 
     /**
@@ -86,6 +87,7 @@ public class SaturationPolicyTest {
         queue.drainTo(results);
 
         assertThat(results).contains(2, 3);
+        executor.shutdown();
     }
 
 
