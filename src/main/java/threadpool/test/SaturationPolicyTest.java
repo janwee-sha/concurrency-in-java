@@ -2,8 +2,6 @@ package threadpool.test;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.*;
 
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
@@ -70,23 +68,16 @@ public class SaturationPolicyTest {
      * The discard-oldest policy first removes a task from the head of the queue, then re-submits the new task.
      */
     @Test
-    public void testDiscardOldest() {
+    public void testDiscardOldest() throws InterruptedException {
         ThreadPoolExecutor executor = new ThreadPoolExecutor(1, 1, 0, MILLISECONDS,
                 new ArrayBlockingQueue<>(2),
                 new ThreadPoolExecutor.DiscardOldestPolicy());
-
-        executor.execute(() -> waitFor(100));
-
         BlockingQueue<Integer> queue = new LinkedBlockingDeque<>();
         executor.execute(() -> queue.offer(1));
         executor.execute(() -> queue.offer(2));
         executor.execute(() -> queue.offer(3));
-        waitFor(150);
 
-        List<Integer> results = new ArrayList<>();
-        queue.drainTo(results);
-
-        assertThat(results).contains(2, 3);
+        assertThat(queue).contains(2, 3);
         executor.shutdown();
     }
 
